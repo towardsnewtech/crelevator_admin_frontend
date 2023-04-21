@@ -4,6 +4,9 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
 	Button,
+	Card,
+	CardBody,
+	CardHeader,
 	Form,
 	FormGroup,
 	Input,
@@ -13,8 +16,9 @@ import {
 	ModalFooter,
 	ModalHeader,
 } from "reactstrap";
-import { deleteUser, updateCategory, deleteCategory, updateSubCategory, deleteSubCategory, deleteProduct } from "../../actions";
+import { deleteUser, updateCategory, deleteCategory, updateSubCategory, deleteSubCategory, deleteProduct, updateProduct } from "../../actions";
 import { SERVER_URL } from "../../config";
+import MDEditor from "@uiw/react-md-editor";
 
 const Datatable = ({ myData, myClass, multiSelectOption, pagination, userTable=false, productTableType=0 }) => {
 	const [open, setOpen] = useState(false);
@@ -25,11 +29,30 @@ const Datatable = ({ myData, myClass, multiSelectOption, pagination, userTable=f
 	const [name, setName] = useState("");
 	const [nameError, setNameError] = useState(false);
 	const [selectedRow, setSelectedRow] = useState(-1);
+	const [availability,  setAvailablility] = useState('');
+	const [features, setFeatures] = useState('');
+	const [specifications, setSpecifications] = useState('');
+	const [price, setPrice] = useState('');
+	const [contact_no, setContactNo] = useState('');
 
 	const changeName = (e) => {
 		setName(e.target.value);
-	};
-
+	}
+	const changeContactNo = (e) => {
+		setContactNo(e.target.value)
+	}
+	const changeAvailability = (e) => {
+		setAvailablility(e)
+	}
+	const changeSpecifications = (e) => {
+		setSpecifications(e)
+	}
+	const changeFeatures = (e) => {
+		setFeatures(e)
+	}
+	const changePrice = (e) => {
+		setPrice(e.target.value)
+	}
 	const convertBase64 = (file) => {
 		return new Promise((resolve, reject) => {
 			const fileReader = new FileReader();
@@ -133,13 +156,48 @@ const Datatable = ({ myData, myClass, multiSelectOption, pagination, userTable=f
 	};
 	const onOpenModal = (index) => {
 		setName(data[index].name);
+		setAvailablility(data[index].availability.props.source);
+		setContactNo(data[index]?.contact_no);
+		setFeatures(data[index].features.props?.source || "");
+		setSpecifications(data[index].specifications.props?.source || "");
+		setPrice(data[index]?.price);
 		setSelectedRow(index);
 		setOpen(true);
 	};
 
 	const update = () => {
 		if(productTableType > 1) {
+			const dataT = {
+				id: data[selectedRow].id,
+				name,
+				imagedata: imagedata,
+				availability,
+				features,
+				specifications,
+				contact_no,
+				price
+			};
 
+			updateProduct(dataT).then(res => {
+				console.log(res);
+				let temp = [...data];
+				temp[selectedRow] = {
+					id: data[selectedRow].id,
+					name : res.name,
+					sub_category_id : res.sub_category_id,
+					price : res.price,
+					contact_no : res.contact_no,
+					availability : <MDEditor.Markdown source={res.availability} style={{whiteSpace: 'pre-wrap'}}></MDEditor.Markdown>,
+					features : <MDEditor.Markdown source={res.features} style={{whiteSpace: 'pre-wrap'}}></MDEditor.Markdown>,
+					specifications : <MDEditor.Markdown source={res.specifications} style={{whiteSpace: 'pre-wrap'}}></MDEditor.Markdown>,
+					image: <img alt="" src={`${SERVER_URL + '\\' + res.imageUrl}`} style={{width:50,height:50}}/>,
+					createdAt : res.createdAt,
+					updatedAt : res.updatedAt
+				};
+				setData(temp);
+				toast.success("Successfully Updated!");
+				onCloseModal();
+			});
 		} else {
 			if(name === "") {
 				setNameError(true);
@@ -284,7 +342,7 @@ const Datatable = ({ myData, myClass, multiSelectOption, pagination, userTable=f
 							}}
 						></i>
 						{
-							productTableType > 1 ?
+							productTableType === 1 &&
 								<Modal
 									isOpen={open}
 									toggle={onCloseModal}
@@ -332,8 +390,9 @@ const Datatable = ({ myData, myClass, multiSelectOption, pagination, userTable=f
 										</Button>
 									</ModalFooter>
 								</Modal>
-							:
-								<Modal
+						}
+						{
+							productTableType === 0	&& <Modal
 									isOpen={open}
 									toggle={onCloseModal}
 									style={{ overlay: { opacity: 0.1 } }}
@@ -363,6 +422,105 @@ const Datatable = ({ myData, myClass, multiSelectOption, pagination, userTable=f
 													ref={fileRef}
 													onChange={changeImage}
 												/>
+											</FormGroup>
+										</Form>
+									</ModalBody>
+									<ModalFooter>
+										<Button
+											type="button"
+											color="primary"
+											onClick={update}
+										>
+											Update
+										</Button>
+										<Button
+											type="button"
+											color="secondary"
+											onClick={onCloseModal}
+										>
+											Close
+										</Button>
+									</ModalFooter>
+								</Modal>
+						}
+						{
+							productTableType === 2	&& <Modal
+									isOpen={open}
+									toggle={onCloseModal}
+									style={{ overlay: { opacity: 0.1 } }}
+								>
+									<ModalHeader toggle={onCloseModal}>
+										<h5 className="modal-title f-w-600" id="exampleModalLabel2">
+											Edit Product
+										</h5>
+									</ModalHeader>
+									<ModalBody>
+										<Form>
+											<FormGroup>
+												<Label htmlFor="recipient-name" className="col-form-label">
+													Product Name :
+												</Label>
+												<Input type="text" className={nameError ? 'form-control input-error' : 'form-control'}
+													value={name} onChange={changeName} />
+											</FormGroup>
+											<FormGroup>
+												<Label htmlFor="recipient-name" className="col-form-label">
+													Contact No :
+												</Label>
+												<Input type="text" 
+													value={contact_no} onChange={changeContactNo} />
+											</FormGroup>
+											<FormGroup>
+												<Label htmlFor="recipient-name" className="col-form-label">
+													Price :
+												</Label>
+												<Input type="text" 
+													value={price} onChange={changePrice} />
+											</FormGroup>
+											<FormGroup>
+												<Label htmlFor="message-text" className="col-form-label">
+													Product Image :
+												</Label>
+												<Input
+													className="form-control"
+													id="validationCustom02"
+													type="file"
+													ref={fileRef}
+													onChange={changeImage}
+												/>
+											</FormGroup>
+											<FormGroup className=" mb-0">
+												<Label htmlFor="message-text" className="col-form-label">
+													Availability :
+												</Label>
+												<div className="description-sm">
+													<MDEditor
+														value={availability}
+														onChange={changeAvailability}
+													/>
+												</div>
+											</FormGroup>
+											<FormGroup className=" mb-0">
+												<Label htmlFor="message-text" className="col-form-label">
+													Features :
+												</Label>
+												<div className="description-sm">
+													<MDEditor
+														value={features}
+														onChange={changeFeatures}
+													/>
+												</div>
+											</FormGroup>
+											<FormGroup className=" mb-0">
+												<Label htmlFor="message-text" className="col-form-label">
+													Specifications :
+												</Label>
+												<div className="description-sm">
+													<MDEditor
+														value={specifications}
+														onChange={changeSpecifications}
+													/>
+												</div>
 											</FormGroup>
 										</Form>
 									</ModalBody>

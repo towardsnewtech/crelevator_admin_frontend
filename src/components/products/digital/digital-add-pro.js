@@ -1,12 +1,14 @@
 import React, { Fragment, useState, useEffect } from "react";
 import Breadcrumb from "../../common/breadcrumb";
-import MyDropzone from "../../common/dropzone";
 import { Button, Card, CardBody, CardHeader, Col, Container, FormGroup, Input, Label, Row } from "reactstrap";
-import MDEditor from "@uiw/react-md-editor";
 import { addProduct, getCategories } from "../../../actions";
-import { ToastContainer, toast } from "react-toastify";
+import BeautyEditor from "../../common/BeautyEditor";
+
+import { useNavigate } from "react-router-dom";
 
 const Digital_add_pro = () => {
+	const navigate = useNavigate() ;
+
 	const [availability, setAvailablility] = useState('')
 	const [features, setFeatures] = useState('')
 	const [specifications, setSpecifications] = useState('')
@@ -56,10 +58,11 @@ const Digital_add_pro = () => {
 		setSpecifications(e)
 	}
 	const onChangeSelectCategory = (e) => {
-		setSelectedCategory(category_list[parseInt(e.target.value)]);
+		setSubCategoryList(category_list[parseInt(e.target.value)].SubCategories)
+		setSelectedCategory(category_list[parseInt(e.target.value)].SubCategories[0]);
 	}
 	const onSelectSubCategory = (e) => {
-		setSelectSubCategory(selected_sub_category[parseInt(e.target.value)]);
+		setSelectSubCategory(sub_category_list[parseInt(e.target.value)]);
 	}
 
 	useEffect(() => {
@@ -74,22 +77,27 @@ const Digital_add_pro = () => {
 		});
 	}, []);
 
-	const onSave = () => {
-		console.log(availability);
+	const onSave = async () => {
+		try {
+			let res = await addProduct({
+				product_name,
+				product_price,
+				contact_no,
+				selected_sub_category,
+				availability,
+				imagedata,
+				features,
+				specifications
+			})
+			console.log(res) ;
 
-		addProduct({
-			product_name,
-			product_price,
-			contact_no,
-			selected_sub_category,
-			availability,
-			imagedata,
-			features,
-			specifications
-		}).then(res => {
-			console.log(res);
-			toast.success("Successfully Added!");
-		})
+			navigate('/products/product-list');
+
+			return ;
+
+		} catch(err) {
+			
+		}
 	}
 	return (
 		<Fragment>
@@ -198,9 +206,11 @@ const Digital_add_pro = () => {
 								<div className="digital-add needs-validation">
 									<FormGroup className=" mb-0">
 										<div className="description-sm">
-											<MDEditor
-												value={availability}
-												onChange={onChangeAvailability}
+											<BeautyEditor
+												name="availability"
+												content={availability}
+												onChange={(availability) => onChangeAvailability(availability)}
+												id={1}
 											/>
 										</div>
 									</FormGroup>
@@ -215,10 +225,12 @@ const Digital_add_pro = () => {
 								<div className="digital-add needs-validation">
 									<FormGroup className=" mb-0">
 										<div className="description-sm">
-											<MDEditor
-												value={features}
-												onChange={onChangeFeatures}
-											/>
+											<BeautyEditor
+												name="features"
+												content={features}
+												onChange={(features) => onChangeFeatures(features)}
+												id={2}
+											/>	
 										</div>
 									</FormGroup>
 								</div>
@@ -232,10 +244,12 @@ const Digital_add_pro = () => {
 								<div className="digital-add needs-validation">
 									<FormGroup className=" mb-0">
 										<div className="description-sm">
-											<MDEditor
-												value={specifications}
-												onChange={onChangeSpecifications}
-											/>
+											<BeautyEditor
+												name="specifications"
+												content={specifications}
+												onChange={(specifications) => onChangeSpecifications(specifications)}
+												id={3}
+											/>	
 										</div>
 									</FormGroup>
 								</div>
@@ -245,10 +259,7 @@ const Digital_add_pro = () => {
 					<Button
 						type="button"
 						color="secondary"
-						onClick={onSave}
-						data-toggle="modal"
-						data-original-title="test"
-						data-target="#exampleModal"
+						onClick={() => onSave()}
 					>
 						Add Product
 					</Button>

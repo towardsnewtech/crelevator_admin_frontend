@@ -117,7 +117,15 @@ export const updateSubCategory = data => {
 	});
     return promise;
 }
-
+export const updateProduct = async (data) => {
+	try {
+		let res = await axios.post(`${SERVER_URL}/api/product/update`, data);
+		return  res.data;
+	} catch(err) {
+		console.log(err);
+		return ;
+	}
+}
 export const deleteSubCategory = data => {
 	var promise = new Promise( (resolve, reject) => {
 		axios.request({

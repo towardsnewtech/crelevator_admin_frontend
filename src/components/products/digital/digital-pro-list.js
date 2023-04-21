@@ -6,6 +6,7 @@ import { Card, CardBody, CardHeader, Col, Container, Row } from "reactstrap";
 import { getProductList } from "../../../actions";
 import { SERVER_URL } from "../../../config";
 import MDEditor from "@uiw/react-md-editor";
+import CreateMarkUp from "../../common/CreateMarkUp";
 
 const Digital_pro_list = () => {
 	const [data, setData] = useState([]);
@@ -17,8 +18,10 @@ const Digital_pro_list = () => {
 			res.products.map((product, index) => {
 				temp.push({
 					...product,
-					image : <img alt="" src={`${SERVER_URL + '\\images\\products\\' + product.image}`} style={{width:50,height:50}}/>,
-					availability : <MDEditor.Markdown source={product.availability} style={{whiteSpace: 'pre-wrap'}}></MDEditor.Markdown>
+					image : <img alt="" src={`${SERVER_URL + '\\images\\products\\' + product.image}`} style={{width:50, height:50}}/>,
+					availability : <CreateMarkUp description={product.availability} />,
+					features : <CreateMarkUp description={product.features} />,
+					specifications : <CreateMarkUp description={product.specifications} />
 				})
 			})
 
