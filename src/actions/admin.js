@@ -88,9 +88,41 @@ export const resetPassword = (data) => async dispatch => {
     }
 }
 
+export const forgotPassword = async (data) => {
+	const res = await axios.request(
+        `${SERVER_URL}/api/admin/forgotpassword`,
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data: data,
+        }
+    ).catch(err => {
+        console.log('error: ', err);
+    });
+
+    if(res && res.data) {
+        return res.data;
+    }
+}
+
 const getCategoryList = () => async dispatch => {
 	try {
 		const res = await axios.get(`${SERVER_URL}/api/admin/getCategoryList`);
+
+		return res.data;
+	} catch(err) {
+		console.log(err);
+		return ;
+	}
+}
+
+export const getUserInfo = async (user_id) => {
+	try {
+		const res = await axios.post(`${SERVER_URL}/api/admin/getUserInfo`, {
+			user_id
+		});
 
 		return res.data;
 	} catch(err) {

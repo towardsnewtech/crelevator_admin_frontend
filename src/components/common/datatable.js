@@ -16,7 +16,7 @@ import {
 	ModalFooter,
 	ModalHeader,
 } from "reactstrap";
-import { deleteUser, updateCategory, deleteCategory, updateSubCategory, deleteSubCategory, deleteProduct, updateProduct } from "../../actions";
+import { deleteUser, updateCategory, deleteCategory, updateSubCategory, deleteSubCategory, deleteProduct, updateProduct, deleteVideo, deleteFaq, deleteNews, deletePdf } from "../../actions";
 import { SERVER_URL } from "../../config";
 import MDEditor from "@uiw/react-md-editor";
 
@@ -142,7 +142,7 @@ const Datatable = ({ myData, myClass, multiSelectOption, pagination, userTable=f
 						toast.success("Successfully Deleted !");
 					}
 				});
-			} else {
+			} else if(productTableType === 2) {
 				deleteProduct(dataT).then(res => {
 					if(res.success) {
 						const del = data ;
@@ -151,6 +151,42 @@ const Datatable = ({ myData, myClass, multiSelectOption, pagination, userTable=f
 						toast.success("Successfully Deleted !");
 					}
 				})
+			} else if(productTableType === 3) {
+				deleteVideo(dataT).then(res => {
+					if(res.success) {
+						const del = data;
+						del.splice(index, 1);
+						setData([...del]);
+						toast.success("Successfully Deleted !");
+					}
+				});
+			} else if(productTableType === 4) {
+				deleteFaq(dataT).then(res => {
+					if(res.success) {
+						const del = data;
+						del.splice(index, 1);
+						setData([...del]);
+						toast.success("Successfully Deleted !");
+					}
+				});
+			} else if(productTableType === 5) {
+				deleteNews(dataT).then(res => {
+					if(res.success) {
+						const del = data;
+						del.splice(index, 1);
+						setData([...del]);
+						toast.success("Successfully Deleted !");
+					}
+				});
+			} else if(productTableType === 6) {
+				deletePdf(dataT).then(res => {
+					if(res.success) {
+						const del = data;
+						del.splice(index, 1);
+						setData([...del]);
+						toast.success("Successfully Deleted !");
+					}
+				});
 			}
 		}
 	};
@@ -330,7 +366,7 @@ const Datatable = ({ myData, myClass, multiSelectOption, pagination, userTable=f
 						></i>
 					</span>
 
-					<span>
+					{/* <span>
 						<i
 							onClick={() => onOpenModal(index)}
 							className="fa fa-pencil"
@@ -542,7 +578,7 @@ const Datatable = ({ myData, myClass, multiSelectOption, pagination, userTable=f
 									</ModalFooter>
 								</Modal>
 						}
-					</span>
+					</span> */}
 				</div>
 			),
 			style: {

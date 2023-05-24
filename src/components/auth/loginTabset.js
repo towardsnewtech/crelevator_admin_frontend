@@ -7,7 +7,11 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { signin } from "../../actions";
 
-const LoginTabset = () => {
+const LoginTabset = (props) => {
+	const {
+		setFlag
+	} = props;
+
 	const history = useNavigate();
 	const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
@@ -106,7 +110,7 @@ const LoginTabset = () => {
 									onChange={changePassword}
 								/>
 							</FormGroup>
-							{/* <div className="form-terms">
+							<div className="form-terms">
 								<div className="custom-control custom-checkbox me-sm-2">
 									<Label className="d-block">
 										<Input
@@ -114,17 +118,17 @@ const LoginTabset = () => {
 											id="chk-ani2"
 											type="checkbox"
 										/>
-										Reminder Me{" "}
+										Remember Me{" "}
 										<span className="pull-right">
 											{" "}
-											<a href="/#" className="btn btn-default forgot-pass p-0">
-												lost your password
-											</a>
+											<div onClick={() => setFlag(2)} className="btn btn-default forgot-pass p-0">
+												Forgot password
+											</div>
 										</span>
 									</Label>
 								</div>
-							</div> */}
-							<div className="form-button">
+							</div>
+							<div className="form-button" style={{ marginBottom: '3rem' }}>
 								<Button
 									color="primary"
 									onClick={() => login()}
@@ -132,8 +136,7 @@ const LoginTabset = () => {
 									Login
 								</Button>
 							</div>
-							{/* <div className="form-footer">
-								<span>Or Login up with social platforms</span>
+							<div className="form-footer" style={{ textAlign: 'center' }}>
 								<ul className="social">
 									<li>
 										<a href="/#">
@@ -156,7 +159,7 @@ const LoginTabset = () => {
 										</a>
 									</li>
 								</ul>
-							</div> */}
+							</div>
 						</Form>
 					</TabPanel>
 					{/* <TabPanel>

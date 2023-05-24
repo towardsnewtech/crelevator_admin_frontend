@@ -1,23 +1,24 @@
 import React, { Fragment, useState } from "react";
-import Breadcrumb from "../../common/breadcrumb";
-import Datatable from "../../common/datatable";
+import Breadcrumb from "../common/breadcrumb";
+import Datatable from "../common/datatable";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {Modal, Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
 import {
-	addCategory,
-	getCategories
-} from '../../../actions';
-import { SERVER_URL } from "../../../config";
+	addPdf,
+	getPdfs
+} from '../../actions';
+import { SERVER_URL } from "../../config";
 
-const Digital_category = () => {
+const PDFs_material = () => {
 	const [data, setData] = React.useState([]);
 	const [open, setOpen] = useState(false);
-	const [imagedata, setImagedata] = React.useState("");
+	const [file, setFile] = React.useState("");
 	const fileRef = React.useRef(null);
 	const [name, setName] = React.useState("");
 	const [nameError, setNameError] = React.useState(false);
 	const [imageError, setImageError] = React.useState(false);
+    const [type, setType] = React.useState();
 	
 	const onOpenModal = () => {
 		setOpen(true);
@@ -34,24 +35,14 @@ const Digital_category = () => {
 	const changeName = (e) => {
 		setName(e.target.value);
 	};
-
-	const convertBase64 = (file) => {
-		return new Promise((resolve, reject) => {
-			const fileReader = new FileReader();
-			fileReader.readAsDataURL(file)
-			fileReader.onload = () => {
-				resolve(fileReader.result);
-			}
-			fileReader.onerror = (error) => {
-				reject(error);
-			}
-		})
-	}
 	
-	const changeImage = async (e) => {
-		const base64 = await convertBase64(e.target.files[0]);
-		setImagedata(base64);
+	const changeFile = async (e) => {
+		setFile(e.target.files[0]);
 	};
+
+    const changeType = async (e) => {
+        setType(e.target.value);
+    }
 
 	const onSave = () => {
 		if(name === "") {
@@ -59,16 +50,17 @@ const Digital_category = () => {
 			return;
 		}
 
-		const dataT = {
-			name: name,
-			imagedata: imagedata,
-		};
-		addCategory(dataT).then(res => {
+		const formData = new FormData() ;
+        formData.append('name', name);
+        formData.append('type', type);
+        formData.append('file', file);
+		addPdf(formData).then(res => {
 			let temp = [...data];
 			temp.push({
 				id: res.id,
 				name: name,
-				image: <img alt="" src={`${SERVER_URL + '\\' + res.imageUrl}`} style={{width:50,height:50}}/>
+                type: type == 0? 'PDFs material' : type == 1? 'EDF' : 'Other',
+				option: <a alt="" href={`${SERVER_URL + '\\' + res.title}`} target="_blank">view</a>
 			});
 			setData(temp);
 			toast.success("Successfully Added!");
@@ -77,13 +69,14 @@ const Digital_category = () => {
 	};
 
 	React.useEffect(() => {
-		getCategories().then(res => {
+		getPdfs().then(res => {
 			let temp = [];
-			res.categories.forEach(category => {
+			res.pdfs.forEach(pdf => {
 				temp.push({
-					id: category.id,
-					name: category.name,
-					image: <img alt="" src={`${SERVER_URL + '\\images\\category\\' + category.image}`} style={{width:50,height:50}}/>
+					id: pdf.id,
+					name: pdf.name,
+                    type: pdf.type == 0? 'PDFs material' : pdf.type == 1? 'EDF' : 'Other',
+					option: <a href={`${SERVER_URL + '\\pdfs\\' + pdf.title}`} target="_blank">view</a>
 				});
 			});
 			setData(temp);
@@ -92,14 +85,14 @@ const Digital_category = () => {
 
 	return (
 		<Fragment>
-			<Breadcrumb title="Category" parent="Products" />
+			<Breadcrumb title="PDFs material" parent="Products" />
 			{/* <!-- Container-fluid starts--> */}
 			<Container fluid={true}>
 				<Row>
 					<Col sm="12">
 						<Card>
 							<CardHeader>
-								<h5>Category</h5>
+								<h5>PDFs material</h5>
 							</CardHeader>
 							<CardBody>
 								<div className="btn-popup pull-right">
@@ -111,7 +104,7 @@ const Digital_category = () => {
 										data-original-title="test"
 										data-target="#exampleModal"
 									>
-										Add Category
+										Add pdf
 									</Button>
 									<Modal isOpen={open} toggle={onCloseModal}>
 										<ModalHeader toggle={onCloseModal}>
@@ -119,7 +112,7 @@ const Digital_category = () => {
 												className="modal-title f-w-600"
 												id="exampleModalLabel2"
 											>
-												Add Category
+												Add Pdf
 											</h5>
 										</ModalHeader>
 										<ModalBody>
@@ -139,15 +132,34 @@ const Digital_category = () => {
 														htmlFor="message-text"
 														className="col-form-label"
 													>
-														Category Image :
+														PDF File :
 													</Label>
 													<Input
 														className={imageError ? 'form-control input-error' : 'form-control'}
 														id="validationCustom02"
 														type="file"
 														ref={fileRef}
-														onChange={changeImage}
+														onChange={changeFile}
 													/>
+												</FormGroup>
+                                                <FormGroup>
+													<Label
+														htmlFor="message-text"
+														className="col-form-label"
+													>
+														PDF Type :
+													</Label>
+													<Input
+														className={imageError ? 'form-control input-error' : 'form-control'}
+														id="validationCustom02"
+														type="select"
+                                                        value={type}
+														onChange={changeType}
+													>
+                                                        <option value='0' selected>PDFs material</option>
+                                                        <option value='1'>EDF</option>
+                                                        <option value='2'>Other</option>
+                                                    </Input>
 												</FormGroup>
 											</Form>
 										</ModalBody>
@@ -177,6 +189,7 @@ const Digital_category = () => {
 										pageSize={5}
 										pagination={true}
 										class="-striped -highlight"
+                                        productTableType={6}
 									/>
 								</div>
 							</CardBody>
@@ -189,4 +202,4 @@ const Digital_category = () => {
 	);
 };
 
-export default Digital_category;
+export default PDFs_material;

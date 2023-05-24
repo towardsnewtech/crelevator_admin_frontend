@@ -20,6 +20,7 @@ export const MENUITEMS = [
         title: 'Users', icon: UserPlus, type: 'sub', active: false, children: [
             { path: '/users/list-user', title: 'User List', type: 'link' },
             { path: '/users/create-user', title: 'Create User', type: 'link' },
+            { path: '/users/emailjs-smtp', title: 'EmailJs Or SMTP', type: 'link'}
         ]
     },
     {
@@ -30,6 +31,14 @@ export const MENUITEMS = [
             { path: '/products/add-product', title: 'Add Product', type: 'link' },
         ]
     },
+    {
+        title: 'Extras', icon: Tag, type: 'sub', active: false, children: [
+            { path: '/extras/training-video', title: 'Training Videos', type: 'link'},
+            { path: '/extras/pdfs-material', title: 'PDFs Material', type: 'link'},
+            { path: '/extras/faq', title: 'FAQ', type: 'link'},
+            { path: '/extras/news', title: 'News', type: 'link'}
+        ]
+    }
     // {
     //     title: 'Sales', icon: DollarSign, type: 'sub', active: false, children: [
     //         { path: '/sales/orders', title: 'Orders', type: 'link' },

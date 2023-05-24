@@ -3,17 +3,16 @@ import Breadcrumb from "../../common/breadcrumb";
 import { Button, Card, CardBody, CardHeader, Col, Container, FormGroup, Input, Label, Row } from "reactstrap";
 import { addProduct, getCategories } from "../../../actions";
 import BeautyEditor from "../../common/BeautyEditor";
-
+import loadingIcon from '../../../assets/images/loading-icon.svg'
 import { useNavigate } from "react-router-dom";
 
 const Digital_add_pro = () => {
-	const navigate = useNavigate() ;
+	const navigate = useNavigate();
 
 	const [availability, setAvailablility] = useState('')
 	const [features, setFeatures] = useState('')
 	const [specifications, setSpecifications] = useState('')
-	const [category_list, setCategoryList] = useState([]) ;
-	const [selected_category, setSelectedCategory] = useState();
+	const [category_list, setCategoryList] = useState([]);
 	const [sub_category_list, setSubCategoryList] = useState([]);
 	const [selected_sub_category, setSelectSubCategory] = useState();
 	const [imagedata, setImagedata] = React.useState("");
@@ -22,6 +21,7 @@ const Digital_add_pro = () => {
 	const [product_name, setProductName] = React.useState("");
 	const [product_price, setProductPrice] = React.useState(0);
 	const [contact_no, setChangeContactNo] = React.useState("");
+	const [loading, setLoading] = React.useState(false);
 
 	const changeImage = async (e) => {
 		const base64 = await convertBase64(e.target.files[0]);
@@ -48,7 +48,7 @@ const Digital_add_pro = () => {
 	const onChangeContactNo = (e) => {
 		setChangeContactNo(e.target.value)
 	}
-	const onChangeAvailability = (e) =>{
+	const onChangeAvailability = (e) => {
 		setAvailablility(e)
 	}
 	const onChangeFeatures = (e) => {
@@ -59,7 +59,7 @@ const Digital_add_pro = () => {
 	}
 	const onChangeSelectCategory = (e) => {
 		setSubCategoryList(category_list[parseInt(e.target.value)].SubCategories)
-		setSelectedCategory(category_list[parseInt(e.target.value)].SubCategories[0]);
+		setSelectSubCategory(category_list[parseInt(e.target.value)].SubCategories[0]);
 	}
 	const onSelectSubCategory = (e) => {
 		setSelectSubCategory(sub_category_list[parseInt(e.target.value)]);
@@ -68,8 +68,8 @@ const Digital_add_pro = () => {
 	useEffect(() => {
 		getCategories().then(res => {
 			setCategoryList(res.categories);
-			if(res.categories.length) {
-				if(res.categories[0].SubCategories?.length) {
+			if (res.categories.length) {
+				if (res.categories[0].SubCategories?.length) {
 					setSubCategoryList(res.categories[0].SubCategories);
 					setSelectSubCategory(res.categories[0].SubCategories[0])
 				}
@@ -79,6 +79,8 @@ const Digital_add_pro = () => {
 
 	const onSave = async () => {
 		try {
+			setLoading(true);
+
 			let res = await addProduct({
 				product_name,
 				product_price,
@@ -89,14 +91,14 @@ const Digital_add_pro = () => {
 				features,
 				specifications
 			})
-			console.log(res) ;
+
+			setLoading(false);
 
 			navigate('/products/product-list');
+			return;
 
-			return ;
+		} catch (err) {
 
-		} catch(err) {
-			
 		}
 	}
 	return (
@@ -160,7 +162,7 @@ const Digital_add_pro = () => {
 										>
 											{
 												sub_category_list.map((sub_category, index) => (
-													<option key={sub_category.id} value={index} >{sub_category.name}</option> 
+													<option key={sub_category.id} value={index} >{sub_category.name}</option>
 												))
 											}
 										</select>
@@ -183,7 +185,7 @@ const Digital_add_pro = () => {
 											htmlFor="message-text"
 											className="col-form-label"
 										>
-											Sub Category Image :
+											<span>*</span> Sub Category Image :
 										</Label>
 										<Input
 											className={imageError ? 'form-control input-error' : 'form-control'}
@@ -230,7 +232,7 @@ const Digital_add_pro = () => {
 												content={features}
 												onChange={(features) => onChangeFeatures(features)}
 												id={2}
-											/>	
+											/>
 										</div>
 									</FormGroup>
 								</div>
@@ -249,7 +251,7 @@ const Digital_add_pro = () => {
 												content={specifications}
 												onChange={(specifications) => onChangeSpecifications(specifications)}
 												id={3}
-											/>	
+											/>
 										</div>
 									</FormGroup>
 								</div>
@@ -259,9 +261,10 @@ const Digital_add_pro = () => {
 					<Button
 						type="button"
 						color="secondary"
+						disabled={loading}
 						onClick={() => onSave()}
 					>
-						Add Product
+						{loading && <img src={loadingIcon} width='1.5%' />} Add Product
 					</Button>
 				</Row>
 			</Container>

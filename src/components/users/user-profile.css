@@ -1,0 +1,12 @@
+.social_li {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.social_icon {
+    color: white;
+}

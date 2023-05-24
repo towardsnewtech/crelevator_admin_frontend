@@ -213,7 +213,7 @@ const Digital_sub_category = () => {
 										pageSize={6}
 										pagination={true}
 										class="-striped -highlight"
-										productTableType={2}
+										productTableType={1}
 									/>
 								</div>
 							</CardBody>

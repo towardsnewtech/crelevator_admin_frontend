@@ -17,6 +17,12 @@ const List_user = () => {
 						f_name: user.first_name,
 						l_name: user.last_name,
 						email: user.email,
+						type: user.account_type === 0 ? "Admin" : "User",
+						profile : <Link
+							to={`/users/user-profile/${user.id}`}
+						>
+							Go to
+						</Link>
 					});
 				});
 				setData(temp);

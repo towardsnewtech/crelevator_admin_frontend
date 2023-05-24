@@ -6,9 +6,11 @@ import stats from "../../assets/images/dashboard/stats.png";
 import "../../assets/scss/slick.scss";
 import "../../assets/scss/slick-theme.scss";
 import { Card, CardBody, Col, Container, Row } from "reactstrap";
+import ForgotPassword from "./forgotPassword";
 
 const Login = () => {
 	const navigate = useNavigate();
+	const [flag, setFlag] = React.useState(1)
 	var settings = {
 		dots: true,
 		infinite: true,
@@ -36,31 +38,34 @@ const Login = () => {
 									<Slider className="single-item" {...settings}>
 										<div>
 											<div>
-												<h3>Welcome to CR Elevator</h3>
+												<h3>Welcome to CR Elevator Supply</h3>
 												<p>
-													Lorem Ipsum is simply dummy text of the printing and
-													typesetting industry. Lorem Ipsum has been the
-													industry's standard dummy.
+													Since 202, CrElevator, Inc. has been the premier publisher
+													for the global vertical transportation industry. It employs
+													specialists in USA, and has technical and news correspondents
+													around the world
 												</p>
 											</div>
 										</div>
 										<div>
 											<div>
-												<h3>Welcome to CR Elevator</h3>
+												<h3>Welcome to CR Elevator Supply</h3>
 												<p>
-													Lorem Ipsum is simply dummy text of the printing and
-													typesetting industry. Lorem Ipsum has been the
-													industry's standard dummy.
+													Since 202, CrElevator, Inc. has been the premier publisher
+													for the global vertical transportation industry. It employs
+													specialists in USA, and has technical and news correspondents
+													around the world
 												</p>
 											</div>
 										</div>
 										<div>
 											<div>
-												<h3>Welcome to CR Elevator</h3>
+												<h3>Welcome to CR Elevator Supply</h3>
 												<p>
-													Lorem Ipsum is simply dummy text of the printing and
-													typesetting industry. Lorem Ipsum has been the
-													industry's standard dummy.
+													Since 202, CrElevator, Inc. has been the premier publisher
+													for the global vertical transportation industry. It employs
+													specialists in USA, and has technical and news correspondents
+													around the world
 												</p>
 											</div>
 										</div>
@@ -70,7 +75,8 @@ const Login = () => {
 							<Col className="col-md-7 p-0 card-right">
 								<Card className="tab2-card">
 									<CardBody>
-										<LoginTabset />
+										{ flag == 1 && <LoginTabset setFlag={setFlag} /> }
+										{ flag == 2 && <ForgotPassword setFlag={setFlag} /> }
 									</CardBody>
 								</Card>
 							</Col>

@@ -27,6 +27,12 @@ import Listuser from '../components/users/list-user'
 import Createvendors from '../components/vendors/create.vendors'
 import Listvendors from '../components/vendors/list-vendors'
 import NotFoundPage from '../components/404/index'
+import User_profile from '../components/users/user-profile'
+import TrainingVideo from '../components/extras/training-video'
+import PdfsMaterial from '../components/extras/pdfs-material'
+import Faq from '../components/extras/faq'
+import News from '../components/extras/news'
+import EmailJsSMTP from '../components/users/emailjs-smtp'
 
 const LayoutRoutes = () => {
 	const isAuthenticated = localStorage.getItem('crelevator_admin_token') !== null ? true : false;
@@ -50,6 +56,11 @@ const LayoutRoutes = () => {
 				/>
 
 				<Route
+					path={`${process.env.PUBLIC_URL}/users/user-profile/:id`}
+					element={isAuthenticated ? <User_profile /> : <NotFoundPage />}
+				/>
+
+				<Route
 					path={`${process.env.PUBLIC_URL}/products/category`}
 					element={isAuthenticated ? <Digitalcategory /> : <NotFoundPage />}
 				/>
@@ -64,6 +75,26 @@ const LayoutRoutes = () => {
 				<Route
 					path={`${process.env.PUBLIC_URL}/products/add-product`}
 					element={isAuthenticated ? <Digitaladdpro /> : <NotFoundPage />}
+				/>
+				<Route
+					path={`${process.env.PUBLIC_URL}/extras/training-video`}
+					element={isAuthenticated ? <TrainingVideo /> : <NotFoundPage />}
+				/>
+				<Route
+					path={`${process.env.PUBLIC_URL}/extras/pdfs-material`}
+					element={isAuthenticated ? <PdfsMaterial /> : <NotFoundPage />}
+				/>
+				<Route
+					path={`${process.env.PUBLIC_URL}/extras/faq`}
+					element={isAuthenticated ? <Faq /> : <NotFoundPage />}
+				/>
+				<Route
+					path={`${process.env.PUBLIC_URL}/extras/news`}
+					element={isAuthenticated ? <News /> : <NotFoundPage />}
+				/>
+				<Route
+					path={`${process.env.PUBLIC_URL}/users/emailjs-smtp`}
+					element={isAuthenticated? <EmailJsSMTP /> : <NotFoundPage />}
 				/>
 
 				{/* <Route
